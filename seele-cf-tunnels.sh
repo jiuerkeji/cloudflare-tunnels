@@ -98,19 +98,27 @@ elif [ "$CHOICE" == "2" ]; then
     # 删除所有隧道
     echo "删除所有隧道..."
     TUNNELS=$(cloudflared tunnel list | awk 'NR>1 {print $1}')
-    for TUNNEL_ID in $TUNNELS; do
-        echo "正在删除隧道 $TUNNEL_ID..."
-        cloudflared tunnel delete $TUNNEL_ID
-        echo "隧道 $TUNNEL_ID 已删除。"
-    done
+    if [ -z "$TUNNELS" ]; then
+        echo "没有发现任何隧道。"
+    else
+        for TUNNEL_ID in $TUNNELS; do
+            echo "正在删除隧道 $TUNNEL_ID..."
+            cloudflared tunnel delete $TUNNEL_ID
+            echo "隧道 $TUNNEL_ID 已删除。"
+        done
+    fi
 
     # 删除 Cloudflare 的 DNS 记录
     echo "删除 Cloudflare 的 DNS 记录..."
     DOMAIN_LIST=$(cloudflared tunnel route dns | awk 'NR>1 {print $2}')
-    for DOMAIN in $DOMAIN_LIST; do
-        echo "删除域名 $DOMAIN 的 DNS 记录..."
-        cloudflared tunnel route dns delete $DOMAIN
-    done
+    if [ -z "$DOMAIN_LIST" ]; then
+        echo "没有发现任何 DNS 记录。"
+    else
+        for DOMAIN in $DOMAIN_LIST; do
+            echo "删除域名 $DOMAIN 的 DNS 记录..."
+            cloudflared tunnel route dns delete $DOMAIN
+        done
+    fi
 
     # 停止并禁用系统服务
     echo "停止并禁用 Cloudflared 系统服务..."
