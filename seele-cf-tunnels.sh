@@ -29,8 +29,9 @@ echo "将域名 $DOMAIN_NAME 指向隧道..."
 cloudflared tunnel route dns $TUNNEL_NAME $DOMAIN_NAME
 
 # 创建配置文件
-CONFIG_FILE="/root/.cloudflared/$TUNNEL_NAME.yml"
+CONFIG_FILE="/etc/cloudflared/$TUNNEL_NAME.yml"
 echo "配置 Cloudflared..."
+mkdir -p /etc/cloudflared
 cat > $CONFIG_FILE << EOL
 tunnel: $UUID
 credentials-file: /root/.cloudflared/$UUID.json
@@ -51,7 +52,22 @@ cloudflared --config $CONFIG_FILE tunnel run $UUID &
 
 # 创建系统服务
 echo "创建系统服务..."
-cloudflared service install
+cat > /etc/systemd/system/cloudflared.service << EOL
+[Unit]
+Description=cloudflared
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/cloudflared --config /etc/cloudflared/$TUNNEL_NAME.yml tunnel run
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+# 重新加载 systemd 并启动服务
+systemctl daemon-reload
+systemctl enable cloudflared
 systemctl start cloudflared
 systemctl status cloudflared
 
