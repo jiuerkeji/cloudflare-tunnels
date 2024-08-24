@@ -54,7 +54,6 @@ if [ "$CHOICE" == "1" ]; then
     cat > $CONFIG_FILE << EOL
 tunnel: $UUID
 credentials-file: /root/.cloudflared/$UUID.json
-protocol: h2mux
 ingress:
   - hostname: $DOMAIN_NAME
     service: http://localhost:$LOCAL_PORT
@@ -63,7 +62,7 @@ EOL
 
     # 验证配置文件
     echo "验证配置文件..."
-    cloudflared tunnel ingress validate --config $CONFIG_FILE
+    cloudflared tunnel ingress validate /etc/cloudflared/$TUNNEL_NAME.yml
 
     # 测试隧道运行
     echo "测试隧道运行..."
@@ -96,6 +95,23 @@ elif [ "$CHOICE" == "2" ]; then
     # 彻底删除 Cloudflare Tunnel
     echo "彻底删除 Cloudflare Tunnel 以及所有相关文件..."
 
+    # 删除所有隧道
+    echo "删除所有隧道..."
+    TUNNELS=$(cloudflared tunnel list | awk 'NR>1 {print $1}')
+    for TUNNEL_ID in $TUNNELS; do
+        echo "正在删除隧道 $TUNNEL_ID..."
+        cloudflared tunnel delete $TUNNEL_ID
+        echo "隧道 $TUNNEL_ID 已删除。"
+    done
+
+    # 删除 Cloudflare 的 DNS 记录
+    echo "删除 Cloudflare 的 DNS 记录..."
+    DOMAIN_LIST=$(cloudflared tunnel route dns | awk 'NR>1 {print $2}')
+    for DOMAIN in $DOMAIN_LIST; do
+        echo "删除域名 $DOMAIN 的 DNS 记录..."
+        cloudflared tunnel route dns delete $DOMAIN
+    done
+
     # 停止并禁用系统服务
     echo "停止并禁用 Cloudflared 系统服务..."
     systemctl stop cloudflared
@@ -120,23 +136,6 @@ elif [ "$CHOICE" == "2" ]; then
     # 删除日志文件（如果有）
     echo "删除日志文件..."
     rm -rf /var/log/cloudflared
-
-    # 删除所有隧道
-    echo "删除所有隧道..."
-    TUNNELS=$(cloudflared tunnel list | awk 'NR>1 {print $1}')
-    for TUNNEL_ID in $TUNNELS; do
-        echo "正在删除隧道 $TUNNEL_ID..."
-        cloudflared tunnel delete $TUNNEL_ID
-        echo "隧道 $TUNNEL_ID 已删除。"
-    done
-
-    # 删除 Cloudflare 的 DNS 记录
-    echo "删除 Cloudflare 的 DNS 记录..."
-    DOMAIN_LIST=$(cloudflared tunnel route dns | awk 'NR>1 {print $2}')
-    for DOMAIN in $DOMAIN_LIST; do
-        echo "删除域名 $DOMAIN 的 DNS 记录..."
-        cloudflared tunnel route dns delete $DOMAIN
-    done
 
     echo "Cloudflare Tunnel 以及所有相关文件已成功删除。"
 
