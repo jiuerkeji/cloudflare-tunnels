@@ -105,17 +105,8 @@ elif [ "$CHOICE" == "2" ]; then
             cloudflared tunnel delete $TUNNEL_ID
             echo "隧道 $TUNNEL_ID 已删除。"
             
-            # 删除 CNAME 记录
-            echo "删除 Cloudflare 的 CNAME 记录..."
-            # 找到与该隧道ID相关的CNAME记录
-            CNAME_RECORD=$(cloudflared tunnel route dns | grep "$TUNNEL_ID.cfargotunnel.com")
-            if [ -z "$CNAME_RECORD" ]; then
-                echo "没有发现与隧道 $TUNNEL_ID 相关的 CNAME 记录。"
-            else
-                DOMAIN=$(echo "$CNAME_RECORD" | awk '{print $1}')
-                echo "删除域名 $DOMAIN 的 CNAME 记录..."
-                cloudflared tunnel route dns delete $TUNNEL_ID $DOMAIN
-            fi
+            # 提示用户手动删除 DNS 记录
+            echo -e "${YELLOW}${BOLD}请自行前往 Cloudflare 官网删除与域名 ${TUNNEL_NAME} 相关的 DNS 记录。${RESET}"
         fi
     fi
 
