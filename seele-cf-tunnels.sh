@@ -105,10 +105,10 @@ elif [ "$CHOICE" == "2" ]; then
             # 删除 DNS 记录
             echo "删除 Cloudflare 的 DNS 记录..."
             DOMAIN=$(cloudflared tunnel route dns | grep "$TUNNEL_ID" | awk '{print $1}')
-            if [ -z "$DOMAIN" ];then
+            if [ -z "$DOMAIN" ]; then
                 echo "没有发现与隧道 $TUNNEL_ID 相关的 DNS 记录。"
             else
-                echo "删除域名 $DOMAIN 的 DNS 记录..."
+                echo "删除与隧道 ID $TUNNEL_ID 相关的 DNS 记录..."
                 cloudflared tunnel route dns delete $TUNNEL_ID $DOMAIN
             fi
         fi
