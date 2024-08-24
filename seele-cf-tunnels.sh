@@ -8,7 +8,7 @@ echo ""
 # 开始菜单
 echo "请选择操作:"
 echo "1. 安装 Cloudflare 内网穿透"
-echo "2. 删除 Cloudflare 内网穿透 (包括所有相关文件)"
+echo "2. 彻底删除 Cloudflare 内网穿透 (包括所有相关文件和记录)"
 read -p "请输入选择的数字: " CHOICE
 
 if [ "$CHOICE" == "1" ]; then
@@ -85,8 +85,8 @@ EOL
     echo "完成！Cloudflare Tunnel 已成功设置并正在运行。"
 
 elif [ "$CHOICE" == "2" ]; then
-    # 删除 Cloudflare Tunnel
-    echo "删除 Cloudflare Tunnel 以及所有相关文件..."
+    # 彻底删除 Cloudflare Tunnel
+    echo "彻底删除 Cloudflare Tunnel 以及所有相关文件..."
 
     # 停止并禁用系统服务
     echo "停止并禁用 Cloudflared 系统服务..."
@@ -100,7 +100,7 @@ elif [ "$CHOICE" == "2" ]; then
     # 重新加载 systemd
     systemctl daemon-reload
 
-    # 删除 Cloudflared 二进制文件
+    # 删除 Cloudflared 可执行文件
     echo "删除 Cloudflared 可执行文件..."
     rm -f /usr/bin/cloudflared
 
@@ -113,12 +113,21 @@ elif [ "$CHOICE" == "2" ]; then
     echo "删除日志文件..."
     rm -rf /var/log/cloudflared
 
-    # 删除隧道
+    # 删除所有隧道
     echo "删除所有隧道..."
     TUNNELS=$(cloudflared tunnel list | awk 'NR>1 {print $1}')
     for TUNNEL_ID in $TUNNELS; do
+        echo "正在删除隧道 $TUNNEL_ID..."
         cloudflared tunnel delete $TUNNEL_ID
         echo "隧道 $TUNNEL_ID 已删除。"
+    done
+
+    # 删除 Cloudflare 的 DNS 记录
+    echo "删除 Cloudflare 的 DNS 记录..."
+    DOMAIN_LIST=$(cloudflared tunnel route dns | awk 'NR>1 {print $2}')
+    for DOMAIN in $DOMAIN_LIST; do
+        echo "删除域名 $DOMAIN 的 DNS 记录..."
+        cloudflared tunnel route dns delete $DOMAIN
     done
 
     echo "Cloudflare Tunnel 以及所有相关文件已成功删除。"
