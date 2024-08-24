@@ -87,13 +87,16 @@ elif [ "$CHOICE" == "2" ]; then
         echo "没有发现任何隧道。"
     else
         echo "可用的隧道列表："
+        echo "ID      NAME"
         echo "$TUNNELS"
-        read -p "请输入要删除的隧道 ID 或名称: " TUNNEL_ID
-        
-        # 检查用户输入的隧道是否存在
-        TUNNEL_EXISTS=$(echo "$TUNNELS" | grep "$TUNNEL_ID")
-        if [ -z "$TUNNEL_EXISTS" ]; then
-            echo "隧道 $TUNNEL_ID 不存在。"
+        read -p "请输入要删除的隧道 ID 或名称: " TUNNEL_INPUT
+
+        # 匹配用户输入的是隧道名称还是隧道ID
+        TUNNEL_ID=$(echo "$TUNNELS" | grep "$TUNNEL_INPUT" | awk '{print $1}')
+        TUNNEL_NAME=$(echo "$TUNNELS" | grep "$TUNNEL_INPUT" | awk '{print $2}')
+
+        if [ -z "$TUNNEL_ID" ]; then
+            echo "隧道 $TUNNEL_INPUT 不存在。"
         else
             echo "清理隧道 $TUNNEL_ID 的活动连接..."
             cloudflared tunnel cleanup $TUNNEL_ID
