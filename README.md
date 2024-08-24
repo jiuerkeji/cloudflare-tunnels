@@ -1,4 +1,4 @@
-## 使用 Cloudflare 内网穿透脚本 `seele-cf-tunnels.sh` 教程
+## 使用 Cloudflare 内网穿透脚本 `cf-tunnels.sh` 教程
 
 本脚本用于管理 Cloudflare Tunnel 的安装、隧道删除以及 cloudflared 的完全删除操作。通过此脚本，您可以方便地安装 Cloudflare 内网穿透隧道、选择性删除隧道或完全删除 Cloudflared 相关文件。
 
@@ -15,10 +15,10 @@
 
 ```bash
 # 下载脚本
-curl -O https://raw.githubusercontent.com/jiuerkeji/cloudflare-tunnels/main/seele-cf-tunnels.sh
+curl -O https://raw.githubusercontent.com/jiuerkeji/cloudflare-tunnels/main/cf-tunnels.sh
 
 # 添加执行权限
-sudo chmod +x seele-cf-tunnels.sh
+sudo chmod +x cf-tunnels.sh
 ```
 
 ### 3. 运行脚本
@@ -26,7 +26,7 @@ sudo chmod +x seele-cf-tunnels.sh
 运行脚本时，您可以选择三种操作：安装 Cloudflare Tunnel、选择性删除隧道或完全删除 `cloudflared`。运行脚本的命令如下：
 
 ```bash
-sudo ./seele-cf-tunnels.sh
+sudo ./cf-tunnels.sh
 ```
 
 ### 4. 使用选项说明
@@ -93,3 +93,4 @@ sudo ./seele-cf-tunnels.sh
 - **保持 `cloudflared` 更新**：如需要继续使用 Cloudflare Tunnel，请定期检查并更新 `cloudflared`，以确保稳定性和安全性。
 
 ---
+
