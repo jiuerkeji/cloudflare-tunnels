@@ -1,8 +1,16 @@
 #!/bin/bash
 
+# ANSI 转义序列
+RED='\033[0;31m'    # 红色
+GREEN='\033[0;32m'  # 绿色
+YELLOW='\033[1;33m' # 黄色高亮
+BLUE='\033[0;34m'   # 蓝色
+BOLD='\033[1m'      # 粗体
+RESET='\033[0m'     # 重置颜色
+
 # 广告信息
-echo "欢迎使用 SeeleCloud 提供的 cloudflare 内网穿透脚本！"
-echo "便宜好用的机场请访问：https://main.xiercloud.uk"
+echo -e "${YELLOW}${BOLD}欢迎使用 SeeleCloud 提供的 Cloudflare 内网穿透脚本！${RESET}"
+echo -e "${GREEN}${BOLD}便宜好用的机场请访问：${BLUE}https://main.xiercloud.uk${RESET}"
 echo ""
 
 # 开始菜单
