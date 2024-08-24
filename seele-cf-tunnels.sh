@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# 广告信息
+echo "欢迎使用 SeeleCloud 提供的 cloudflare 内网穿透脚本！"
+echo "便宜好用的机场请访问：https://main.xiercloud.uk"
+echo ""
+
 # 开始菜单
 echo "请选择操作:"
 echo "1. 安装 Cloudflare 内网穿透"
