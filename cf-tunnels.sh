@@ -28,7 +28,7 @@ if [ "$CHOICE" == "1" ]; then
     LOCAL_PORT=${LOCAL_PORT:-80}
 
     echo "正在下载并安装 Cloudflared..."
-    curl -L 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64' -o /usr/bin/cloudflared
+    curl -L 'https://file.xiercloud.uk/cloudflared-linux-amd64' -o /usr/bin/cloudflared
     chmod +x /usr/bin/cloudflared
 
     echo "登录 Cloudflare，请在浏览器中完成授权..."
